@@ -37,7 +37,7 @@
       (_regs_)[addr] = (_data_);                                               \
   while (0)
 
-void vJumpToDFU(uint32_t *pulMSP_PC) {
+void vJumpToDFU(const uint32_t *pulMSP_PC) {
   /*
    * Disable interrupts upfront.
    * This is essential to prevent any further scheduling or interrupts pre-empting

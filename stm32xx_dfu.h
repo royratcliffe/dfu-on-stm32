@@ -22,6 +22,10 @@
 
 #pragma once
 
+#include <stdint.h> /* for uint32_t */
+
+#include "stm32xx_hal.h" /* for HAL functions and definitions */
+
 /*!
  * \brief Initiates Device Firmware Update (DFU) mode.
  * \param pulMSP_PC Pointer to the DFU entry point address. The first element should
@@ -54,4 +58,4 @@
  * system is in a safe state before calling this function. Your milage may
  * vary.
  */
-void vJumpToDFU(uint32_t *pulMSP_PC) __attribute__((noreturn));
+void vJumpToDFU(const uint32_t *pulMSP_PC) __attribute__((noreturn));
