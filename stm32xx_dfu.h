@@ -24,8 +24,6 @@
 
 #include <stdint.h> /* for uint32_t */
 
-#include "stm32xx_hal.h" /* for HAL functions and definitions */
-
 /*!
  * \brief Initiates Device Firmware Update (DFU) mode.
  * \param pulMSP_PC Pointer to the DFU entry point address. The first element should

@@ -20,6 +20,8 @@
 
 #include "stm32xx_dfu.h"
 
+#include "stm32xx_hal.h" /* for HAL functions and definitions */
+
 #include <stddef.h> /* for size_t */
 
 /*!
