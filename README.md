@@ -4,58 +4,52 @@
 
 What is Device Firmware Update (DFU) mode? It is a special mode that
 allows you to update the firmware of a device without needing to use a
-bootloader. It is commonly used in embedded systems, such as
-microcontrollers, to update the device’s firmware without requiring a
-bootloader.
+bootloader. DFU is a protocol that will enable you to update the
+firmware of a device over USB or other communication interfaces. It is
+commonly used in embedded microcontrollers.
 
-DFU is a protocol that allows you to update the firmware of a device
-over USB or other communication interfaces. It is commonly used in
-embedded systems, such as microcontrollers, to update the device’s
-firmware without requiring a bootloader.
-
-DFU mode is a built-in bootloader feature in many STM32 microcontrollers
-that enables firmware updates over USB. It uses the USB DFU protocol,
-which is standardised and supported by tools like STM32CubeProgrammer.
-Most STM32 boards enter DFU mode by holding down a BOOT0 pin while
-resetting the device. This mode enables you to upload new firmware to
-the device via a USB connection, eliminating the need for a bootloader.
-The DFU protocol is designed to be simple and efficient, enabling you to
-update the device’s firmware quickly and easily.
+DFU mode is a built-in bootloader feature in many STM32
+microcontrollers. The protocol is standardised and supported by tools
+like STM32CubeProgrammer. Many STM32 boards enter DFU mode by holding
+down the BOOT0 pin while resetting the device; however, not all STM32
+families use this method. Some newer devices employ different mechanisms
+for entering DFU mode.
 
 ## Why DFU?
 
-DFU mode is useful for several reasons:
+DFU mode is helpful for several reasons:
 
 1.  **Ease of Use**: DFU mode simplifies the firmware update process by
     eliminating the need for a separate bootloader. This can make the
     development and deployment process more straightforward.
 
 2.  **Flexibility**: DFU mode enables firmware updates over various
-    communication interfaces, including USB, UART, and others. This
-    allows for greater flexibility in how firmware updates are
-    delivered.
+    communication interfaces, including USB, UART, and others, allowing
+    for greater flexibility in delivering firmware updates.
 
 3.  **Reliability**: The DFU protocol includes mechanisms for verifying
     the integrity of the firmware being uploaded, which can help ensure
     that updates are applied successfully and without corruption.
 
-4.  **Standardisation**: DFU is a standardised protocol, meaning it is
-    widely supported by various tools and libraries. This can make it
-    easier to find resources and support for implementing DFU mode in
-    your projects.
+4.  **Standardisation**: DFU is a standardised protocol, meaning various
+    tools and libraries widely support it. This can make it easier to
+    find resources and support for implementing DFU mode in your
+    projects.
 
+The DFU protocol is designed to be efficient and straightforward,
+enabling you to update the device’s firmware quickly and easily.
 However, what if you want to implement DFU mode on your STM32 device
 without using a bootloader? This is where the `vJumpToDFU` function
 comes in. It allows you to enter DFU mode directly from your application
 code, without needing to use a bootloader.
 
-## How to Implement manual DFU Mode on STM32
+## How to Implement Manual DFU Mode on STM32
 
-Hopefully, the following code snippet will help you to quickly implement
-DFU mode on your STM32 device. It is a simple function that you can call
-to enter DFU mode. It disables interrupts, clears all interrupt enable
-and pending registers, sets the main stack pointer, and jumps to the DFU
-entry point. Here is the code snippet:
+Hopefully, the following code snippet will help you to implement DFU
+mode on your STM32 device quickly. It is a simple function that you can
+call to enter DFU mode. It disables interrupts, clears all interrupt
+enable and pending registers, sets the main stack pointer, and jumps to
+the DFU entry point. Here is the code snippet:
 
 ``` c
 /*!
@@ -87,7 +81,7 @@ entry point. Here is the code snippet:
  * It will disable all interrupts and clear all interrupt enable and pending
  * registers, which may lead to loss of data or state if called at an
  * inappropriate time. Ensure that all necessary data is saved and that the
- * system is in a safe state before calling this function. Your milage may
+ * system is in a safe state before calling this function. Your mileage may
  * vary.
  */
 void vJumpToDFU(uint32_t *pulMSP_PC) __attribute__((noreturn));
@@ -170,7 +164,7 @@ and `0x08000000`, respectively. The first address is the main stack
 pointer (MSP) value, and the second address is the program counter (PC)
 value. The MSP value is the address of the top of the stack, and the PC
 value is the address of the DFU entry point. You can find these values
-in the STM32 reference manual or in the linker script for your project.
+in the STM32 reference manual.
 
 Next, call the `vJumpToDFU` function with the correct MSP and PC values.
 For example, if the MSP value is `0x20020000` and the PC value is
@@ -204,6 +198,11 @@ the STM32F4, the DFU entry point is typically located at address
 vJumpToDFU((uint32_t *)0x1fff0000UL);
 ```
 
+In the STM32’s [memory
+map](https://stm32world.com/wiki/STM32_Memory_Map), address
+$\text{1FFF,0000}_{16}$ is the start of system memory, where the
+bootloader resides.
+
 ## Writing to all registers in a block
 
 The `vJumpToDFU` function uses a macro called `WR_ALL_REGS` to write the
@@ -230,17 +229,18 @@ defined below.
 ```
 
 The macro is used to assign the same value to all registers within a
-contiguous block of memory-mapped registers. This is helpful for
-initialising or resetting multiple registers to the same value.
+contiguous block of memory-mapped registers. This helps initialise or
+reset multiple registers to the same value.
 
-The implementation makes some assumptions about the type of registers,
-so use it cautiously. Its design works with arrays of registers where
-each register has the same type and size. Therefore, it is not suitable
-for writing to individual registers or registers of different types. It
-is also unsuitable for registers that are not contiguous in memory, as
-it assumes that the registers form a contiguous block. Additionally, it
-is not appropriate for registers of different types, since it assumes
-that all registers are of the same type and size.
+The implementation makes certain assumptions about the type of
+registers; therefore, use it cautiously. Its design works with arrays of
+registers where each register has the same type and size. Consequently,
+it is not suitable for writing to individual registers or registers of
+different types. It is also unsuitable for registers that are not
+contiguous in memory, as it assumes that the registers form a contiguous
+block in memory. Additionally, it is not appropriate for registers of
+different types, since it assumes that all registers are of the same
+type and size.
 
 The macro `WR_ALL_REGS` takes two arguments:
 
